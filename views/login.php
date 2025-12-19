@@ -126,6 +126,7 @@
         
         <!-- Important: The form action uses the url() function to ensure correct path -->
         <form method="POST" action="<?php echo htmlspecialchars(url('login')); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required placeholder="Enter your email">

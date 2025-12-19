@@ -2,11 +2,15 @@
 /**
  * Login Handler
  * 
- * Processes login form submissions
- * 
- * Note: This is a simplified demo version. In a production environment,
- * you should use a proper database and password hashing with password_verify()
+ * Processes login form submissions with proper security measures
  */
+
+// Verify CSRF token
+$csrfToken = $_POST['csrf_token'] ?? '';
+if (!verifyCsrfToken($csrfToken)) {
+    $_SESSION['error'] = 'Invalid security token. Please try again.';
+    redirect('login');
+}
 
 // Validate input
 $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
@@ -26,14 +30,14 @@ if (empty($password)) {
 // In production, this would query a database
 $users = $_SESSION['registered_users'] ?? [];
 
-// Demo users for testing
+// Demo users for testing (passwords are hashed)
 $demoUsers = [
     'demo@example.com' => [
-        'password' => 'demo123',
+        'password' => password_hash('demo123', PASSWORD_DEFAULT),
         'name' => 'Demo User'
     ],
     'admin@bussin.com' => [
-        'password' => 'admin123',
+        'password' => password_hash('admin123', PASSWORD_DEFAULT),
         'name' => 'Admin User'
     ]
 ];
@@ -41,15 +45,17 @@ $demoUsers = [
 // Merge demo users with registered users
 $allUsers = array_merge($demoUsers, $users);
 
-// Check credentials
+// Check credentials using secure password verification
 if (isset($allUsers[$email])) {
-    // In production: use password_verify($password, $allUsers[$email]['password'])
-    if ($password === $allUsers[$email]['password']) {
+    if (password_verify($password, $allUsers[$email]['password'])) {
         // Login successful - store user info in session
         $_SESSION['user'] = [
             'email' => $email,
             'name' => $allUsers[$email]['name']
         ];
+        
+        // Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
         
         // Redirect to dashboard using the correct base path
         redirect('dashboard');

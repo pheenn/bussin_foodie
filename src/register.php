@@ -2,11 +2,15 @@
 /**
  * Register Handler
  * 
- * Processes registration form submissions
- * 
- * Note: This is a simplified demo version. In a production environment,
- * you should use a proper database and password_hash()
+ * Processes registration form submissions with proper security measures
  */
+
+// Verify CSRF token
+$csrfToken = $_POST['csrf_token'] ?? '';
+if (!verifyCsrfToken($csrfToken)) {
+    $_SESSION['error'] = 'Invalid security token. Please try again.';
+    redirect('register');
+}
 
 // Validate input
 $name = trim($_POST['name'] ?? '');
@@ -43,11 +47,10 @@ if (isset($users[$email])) {
     redirect('register');
 }
 
-// Register the user (in demo, we store in session)
-// In production: use password_hash($password, PASSWORD_DEFAULT)
+// Register the user with hashed password
 $users[$email] = [
-    'password' => $password,
-    'name' => $name
+    'password' => password_hash($password, PASSWORD_DEFAULT),
+    'name' => htmlspecialchars($name, ENT_QUOTES, 'UTF-8')
 ];
 
 $_SESSION['registered_users'] = $users;

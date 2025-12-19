@@ -114,6 +114,7 @@
         
         <!-- Important: The form action uses the url() function to ensure correct path -->
         <form method="POST" action="<?php echo htmlspecialchars(url('register')); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" required placeholder="Enter your name">

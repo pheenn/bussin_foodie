@@ -26,7 +26,32 @@ define('APP_ROOT', dirname(__DIR__));
  */
 function url(string $path = ''): string {
     $path = ltrim($path, '/');
+    if (BASE_PATH === '') {
+        return '/' . $path;
+    }
     return BASE_PATH . '/' . $path;
+}
+
+/**
+ * Generate a CSRF token for form protection
+ * 
+ * @return string The CSRF token
+ */
+function generateCsrfToken(): string {
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * Verify CSRF token from form submission
+ * 
+ * @param string $token The token from the form
+ * @return bool True if token is valid
+ */
+function verifyCsrfToken(string $token): bool {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 /**
