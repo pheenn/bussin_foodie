@@ -102,16 +102,21 @@ This project solves it by:
 
 This ensures all URLs are correctly prefixed with `/bussin_foodie/public`.
 
-## Security Notes
+## Security Features
 
-⚠️ **This is a demo application.** For production use:
+This application includes several security features:
 
-- Use a proper database (MySQL, PostgreSQL)
-- Hash passwords with `password_hash()` and verify with `password_verify()`
-- Implement CSRF protection
-- Add input sanitization and validation
-- Use HTTPS
-- Implement rate limiting for login attempts
+- **CSRF Protection**: All forms include CSRF tokens to prevent cross-site request forgery attacks
+- **Password Hashing**: Passwords are hashed using `password_hash()` and verified with `password_verify()`
+- **Session Security**: Session IDs are regenerated on login to prevent session fixation
+- **Input Validation**: User inputs are validated and sanitized
+
+⚠️ **For production use, consider also:**
+
+- Using a proper database (MySQL, PostgreSQL)
+- Implementing HTTPS
+- Adding rate limiting for login attempts
+- Adding more comprehensive input sanitization
 
 ## License
 
